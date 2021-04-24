@@ -18,14 +18,14 @@ end
 function find(url) :: Vector{Article}
   articles = Article[]
 
-  result = DBInterface.execute(CONN, "SELECT content, title, image, url, links FROM `articles` WHERE url = '$url'")
+  result = DBInterface.execute(CONN, "SELECT content, links, title, image, url FROM `articles` WHERE url = '$url'")
 
   for row in Tables.rows(result)
     push!(articles, Article(Tables.getcolumn(row, 1),
-                            Tables.getcolumn(row, 2),
+                            JSON.parse(Tables.getcolumn(row, 2)),
                             Tables.getcolumn(row, 3),
                             Tables.getcolumn(row, 4),
-                            JSON.parse(Tables.getcolumn(row, 5))))
+                            Tables.getcolumn(row, 5)))
   end
 
   articles
